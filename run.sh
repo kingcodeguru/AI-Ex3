@@ -1,0 +1,1 @@
+python my/main.py $1

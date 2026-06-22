@@ -34,7 +34,7 @@ def resolve_version_file(argv):
         return argv[2]
 
     version = argv[1] if len(argv) > 1 else "1"
-    return f"ex2-v{version}.py"
+    return f"ex3-v{version}.py"
 
 def main(argv):
     version_file = resolve_version_file(argv)

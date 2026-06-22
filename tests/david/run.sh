@@ -5,12 +5,12 @@ cd ../../
 
 
 cp original/*.py bin/
-cp tests/david/ex2_check.py bin/
-cp my/versions/${ver} bin/ex2.py
+cp tests/david/ex3_check.py bin/
+cp my/versions/${ver} bin/ex3.py
 
 
 
 # run
 
 cd bin
-python3 ex2_check.py
+python3 ex3_check.py
