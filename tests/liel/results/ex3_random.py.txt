@@ -1,0 +1,45 @@
+Averages per problem (n_runs = 30)
+==================================================
+
+p1_easy: reward_average=704.733333 | time_average=56.038171s
+e1_easy: reward_average=683.633333 | time_average=144.574889s
+e2_easy: reward_average=574.800000 | time_average=23.010224s
+Averages per problem (n_runs = 30)
+==================================================
+
+p1_easy: reward_average=4.566667 | time_average=0.014539s
+e1_easy: reward_average=6.100000 | time_average=0.008037s
+e2_easy: reward_average=4.966667 | time_average=0.007402s
+e3_easy: reward_average=0.000000 | time_average=0.007618s
+e4_easy: reward_average=5.533333 | time_average=0.008066s
+e5_easy: reward_average=2.100000 | time_average=0.007721s
+m1_easy: reward_average=0.000000 | time_average=0.007912s
+m2_easy: reward_average=1.133333 | time_average=0.007744s
+m3_easy: reward_average=3.100000 | time_average=0.008164s
+m4_easy: reward_average=3.366667 | time_average=0.008647s
+m5_easy: reward_average=0.000000 | time_average=0.007892s
+rl_easy: reward_average=114.866667 | time_average=0.007192s
+p1_med: reward_average=6.866667 | time_average=0.011557s
+e1_med: reward_average=9.133333 | time_average=0.012102s
+e2_med: reward_average=9.666667 | time_average=0.011180s
+e3_med: reward_average=1.366667 | time_average=0.011558s
+e4_med: reward_average=8.266667 | time_average=0.012193s
+e5_med: reward_average=2.333333 | time_average=0.011580s
+m1_med: reward_average=0.266667 | time_average=0.011424s
+m2_med: reward_average=3.000000 | time_average=0.011730s
+m3_med: reward_average=4.066667 | time_average=0.012610s
+m4_med: reward_average=5.100000 | time_average=0.013023s
+m5_med: reward_average=0.000000 | time_average=0.011858s
+rl_med: reward_average=140.733333 | time_average=0.010171s
+p1_hard: reward_average=9.966667 | time_average=0.015960s
+e1_hard: reward_average=9.566667 | time_average=0.017145s
+e2_hard: reward_average=9.033333 | time_average=0.015722s
+e3_hard: reward_average=0.433333 | time_average=0.016671s
+e4_hard: reward_average=10.466667 | time_average=0.017144s
+e5_hard: reward_average=3.466667 | time_average=0.016341s
+m1_hard: reward_average=0.100000 | time_average=0.015973s
+m2_hard: reward_average=2.933333 | time_average=0.016267s
+m3_hard: reward_average=5.100000 | time_average=0.017115s
+m4_hard: reward_average=8.666667 | time_average=0.018183s
+m5_hard: reward_average=0.100000 | time_average=0.016942s
+rl_hard: reward_average=190.400000 | time_average=0.013566s

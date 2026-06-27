@@ -86,6 +86,12 @@ class Controller:
         self._mode = "expectimax"
         self._collapse_moves = False
 
+    @staticmethod
+    def _inv(prob):
+        """Safely calculate inverse probability (expected cost).
+        Returns Infinity if the probability is effectively zero."""
+        return (1.0 / prob) if prob > 1e-9 else INF
+
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
@@ -194,12 +200,12 @@ class Controller:
         for eid in self._elevator_ids:
             att = self._stats_move_attempts[eid]
             suc = self._stats_move_successes[eid]
-            self._elevator_prob[eid] = suc / att if att > 0 else 0.5
+            self._elevator_prob[eid] = suc / att if att > 0 else 0.0
             
         for pid in self._person_ids:
             att = self._stats_person_attempts[pid]
             suc = self._stats_person_successes[pid]
-            self._person_prob[pid] = suc / att if att > 0 else 0.5
+            self._person_prob[pid] = suc / att if att > 0 else 0.0
             
             rews = self._stats_person_rewards[pid]
             if not rews:
@@ -589,11 +595,11 @@ class Controller:
             for eid in self._elevator_ids:
                 if elevator_load[eid] + weight > self._capacities[eid] or start_floor not in self._reachable_sets[eid]:
                     continue
-                move_to_pickup = 0.0 if elevator_floor[eid] == start_floor else (1.0 / self._elevator_prob[eid])
-                enter_cost = 1.0 / p_prob
+                move_to_pickup = 0.0 if elevator_floor[eid] == start_floor else self._inv(self._elevator_prob[eid])
+                enter_cost = self._inv(p_prob)
 
                 if goal in self._reachable_sets[eid]:
-                    move_to_goal = 0.0 if start_floor == goal else (1.0 / self._elevator_prob[eid])
+                    move_to_goal = 0.0 if start_floor == goal else self._inv(self._elevator_prob[eid])
                     cost = move_to_pickup + enter_cost + move_to_goal + enter_cost
                     best = min(best, cost)
 
@@ -601,9 +607,9 @@ class Controller:
                     if eid2 == eid or goal not in self._reachable_sets[eid2] or elevator_load[eid2] + weight > self._capacities[eid2]:
                         continue
                     for meet in self._reachable_sets[eid] & self._reachable_sets[eid2]:
-                        move_to_meet = 0.0 if meet == start_floor else (1.0 / self._elevator_prob[eid])
-                        move_e2_to_meet = 0.0 if elevator_floor[eid2] == meet else (1.0 / self._elevator_prob[eid2])
-                        move_e2_to_goal = 0.0 if meet == goal else (1.0 / self._elevator_prob[eid2])
+                        move_to_meet = 0.0 if meet == start_floor else self._inv(self._elevator_prob[eid])
+                        move_e2_to_meet = 0.0 if elevator_floor[eid2] == meet else self._inv(self._elevator_prob[eid2])
+                        move_e2_to_goal = 0.0 if meet == goal else self._inv(self._elevator_prob[eid2])
                         cost = (move_to_pickup + enter_cost + move_to_meet + enter_cost
                                 + move_e2_to_meet + enter_cost + move_e2_to_goal + enter_cost)
                         best = min(best, cost)
@@ -613,17 +619,17 @@ class Controller:
         current_floor = elevator_floor[eid]
         best = math.inf
         if goal in self._reachable_sets[eid]:
-            move_to_goal = 0.0 if current_floor == goal else (1.0 / self._elevator_prob[eid])
-            best = min(best, move_to_goal + (1.0 / p_prob))
+            move_to_goal = 0.0 if current_floor == goal else self._inv(self._elevator_prob[eid])
+            best = min(best, move_to_goal + self._inv(p_prob))
 
         for eid2 in self._elevator_ids:
             if eid2 == eid or goal not in self._reachable_sets[eid2] or elevator_load[eid2] + weight > self._capacities[eid2]:
                 continue
             for meet in self._reachable_sets[eid] & self._reachable_sets[eid2]:
-                move_to_meet = 0.0 if current_floor == meet else (1.0 / self._elevator_prob[eid])
-                move_e2_to_meet = 0.0 if elevator_floor[eid2] == meet else (1.0 / self._elevator_prob[eid2])
-                move_e2_to_goal = 0.0 if meet == goal else (1.0 / self._elevator_prob[eid2])
-                cost = move_to_meet + (1.0 / p_prob) + move_e2_to_meet + (1.0 / p_prob) + move_e2_to_goal + (1.0 / p_prob)
+                move_to_meet = 0.0 if current_floor == meet else self._inv(self._elevator_prob[eid])
+                move_e2_to_meet = 0.0 if elevator_floor[eid2] == meet else self._inv(self._elevator_prob[eid2])
+                move_e2_to_goal = 0.0 if meet == goal else self._inv(self._elevator_prob[eid2])
+                cost = move_to_meet + self._inv(p_prob) + move_e2_to_meet + self._inv(p_prob) + move_e2_to_goal + self._inv(p_prob)
                 best = min(best, cost)
 
         return best
@@ -637,7 +643,7 @@ class Controller:
             goal = self._person_goal[pid]
             w = self._person_weight[pid]
             pprob = self._person_prob[pid]
-            pc = (1.0 / pprob) if pprob > 0 else INF
+            pc = self._inv(pprob)
             dist = {}
             pq = []
             for eid in self._elevator_ids:
@@ -651,7 +657,7 @@ class Controller:
                 if u[0] == "in":
                     eid, f = u[1], u[2]
                     ep = self._elevator_prob[eid]
-                    mc = (1.0 / (ep * ep)) if ep > 0 else INF
+                    mc = self._inv(ep * ep)
                     for f2 in self._reachable_sets[eid]:
                         if f2 != f:
                             v = ("in", eid, f2); nd = d + mc
@@ -687,7 +693,7 @@ class Controller:
                 if u[0] == "in":
                     eid, f = u[1], u[2]
                     ep = self._elevator_prob[eid]
-                    mc = (1.0 / (ep * ep)) if ep > 0 else INF
+                    mc = self._inv(ep * ep)
                     for f2 in self._reachable_sets[eid]:
                         if f2 != f:
                             v = ("in", eid, f2); nd = d + mc
@@ -720,7 +726,7 @@ class Controller:
         ee_total = 0.0; move_max = 0.0
         for pid, loc in persons:
             if pid not in targets: continue
-            pc = 1.0 / self._person_prob[pid]
+            pc = self._inv(self._person_prob[pid])
             if loc[0] == "floor": node = ("floor", loc[1]); ee_total += 2.0 * pc
             else: node = ("in", loc[1], ef[loc[1]]); ee_total += pc
             mc = self._mcost[pid].get(node, INF)
@@ -738,7 +744,7 @@ class Controller:
             eid = loc[1]
             ef = e_dict[eid][0]
             if ef == self._person_goal[pid]:
-                cost = 1.0 / self._person_prob[pid]
+                cost = self._inv(self._person_prob[pid])
                 new_elevs = tuple((e[0], e[1], e[2] - self._person_weight[pid]) if e[0] == eid else e for e in elevs)
                 new_persons = tuple(p for p in persons if p[0] != pid)
                 mandatory.append((f"EXIT{{{pid},{eid}}}", (new_elevs, new_persons), cost))
@@ -750,7 +756,7 @@ class Controller:
             f = loc[1]
             for eid, (ef, ew) in e_dict.items():
                 if ef == f and ew + self._person_weight[pid] <= self._capacities[eid]:
-                    cost = 1.0 / self._person_prob[pid]
+                    cost = self._inv(self._person_prob[pid])
                     new_elevs = tuple((e[0], e[1], e[2] + self._person_weight[pid]) if e[0] == eid else e for e in elevs)
                     new_persons = tuple((p[0], ("in", eid)) if p[0] == pid else p for p in persons)
                     succ.append((f"ENTER{{{pid},{eid}}}", (new_elevs, new_persons), cost))
@@ -760,7 +766,7 @@ class Controller:
             eid = loc[1]
             ef = e_dict[eid][0]
             if ef != self._person_goal[pid] and ef in self._shared_floors:
-                cost = 1.0 / self._person_prob[pid]
+                cost = self._inv(self._person_prob[pid])
                 new_elevs = tuple((e[0], e[1], e[2] - self._person_weight[pid]) if e[0] == eid else e for e in elevs)
                 new_persons = tuple((p[0], ("floor", ef)) if p[0] == pid else p for p in persons)
                 succ.append((f"EXIT{{{pid},{eid}}}", (new_elevs, new_persons), cost))
@@ -773,7 +779,7 @@ class Controller:
             
         for eid, (ef, ew) in e_dict.items():
             ep = self._elevator_prob[eid]
-            cost = (1.0 / (ep * ep)) if ep > 0 else INF
+            cost = self._inv(ep * ep)
             for tf in self._reachable_sets[eid]:
                 if tf != ef and tf in interesting:
                     new_elevs = tuple((e[0], tf, e[2]) if e[0] == eid else e for e in elevs)
