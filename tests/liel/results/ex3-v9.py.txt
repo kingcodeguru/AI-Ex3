@@ -1,0 +1,24 @@
+Averages per problem (n_runs = 30)
+==================================================
+
+p1_easy: reward_average=771.800000 | time_average=1.213790s
+e1_easy: reward_average=798.566667 | time_average=3.562014s
+e2_easy: reward_average=656.866667 | time_average=0.787300s
+e3_easy: reward_average=563.333333 | time_average=12.938420s
+e4_easy: reward_average=909.066667 | time_average=2.869852s
+e5_easy: reward_average=660.866667 | time_average=3.289664s
+m1_easy: reward_average=522.366667 | time_average=16.058621s
+m2_easy: reward_average=561.033333 | time_average=24.643245s
+m3_easy: reward_average=565.533333 | time_average=31.555317s
+m4_easy: reward_average=734.566667 | time_average=100.317515s
+m5_easy: reward_average=600.666667 | time_average=5.873017s
+rl_easy: reward_average=2938.466667 | time_average=0.131169s
+p1_med: reward_average=1131.966667 | time_average=1.845607s
+e1_med: reward_average=1140.933333 | time_average=5.278925s
+e2_med: reward_average=945.033333 | time_average=1.137118s
+e3_med: reward_average=803.000000 | time_average=19.064676s
+e4_med: reward_average=1296.400000 | time_average=4.379317s
+e5_med: reward_average=953.066667 | time_average=5.237539s
+m1_med: reward_average=745.766667 | time_average=23.531054s
+m2_med: reward_average=793.833333 | time_average=31.884879s
+m3_med: reward_average=800.933333 | time_average=39.163616s
